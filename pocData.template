@@ -1,0 +1,77 @@
+{% if entity.name == "Persona" %}
+const direccion = require("./Direccion");
+const telefono = require("./Telefono"); 
+{% endif %}
+
+/**
+ * Clase destinada a la gestion de datos referente {{entity.name|capitalize}}
+ */
+class {{entity.name|capitalize}} {
+
+  /**
+    * Constructor de la clase
+    */
+  constructor ( {% for property in entity.properties %}{{property.name}}{% if not loop.last %}, {% endif %}{% endfor %} ){
+    this.db = [];
+    {% for property in entity.properties %}
+    this.{{property.name}} = {{property.name}};
+    {% endfor %}
+  }
+  {% for property in entity.properties %}
+
+  /**
+    * Funcion que obtiene {{property.name}} de {{entity.name|capitalize}}
+    */
+  get{{property.name|capitalize}} () {
+    return this.{{property.name}};
+  }
+  {% endfor %}
+  {% for property in entity.properties %}
+  
+  /**
+    * Funcion que establece {{property.name}} de {{entity.name|capitalize}}
+    */
+  set{{property.name|capitalize}} (precio) {
+    this.{{property.name}} = {{property.name}};
+  }
+  {% endfor %} 
+  /**
+    * Funcion que inserta una nueva {{entity.name|capitalize}} en la base de datos
+    */
+  insertar{{entity.name|capitalize}} ({{entity.name|lower}}) {
+    let valores = `{% for property in entity.properties -%}
+        ${ {{entity.name|lower}}.get{{property.name|capitalize}}() }{% if not loop.last %}, {% endif %}
+      {%- endfor %}`;
+    let r = this.db.push(valores);
+    if (r) {
+      console.log( "{{entity.name|upper}}_INSERTADA" );
+    } else {
+      console.log( "ERROR_{{entity.name|upper}}_INSERTADA" );
+    }
+  }
+}
+
+{% if entity.name == "Persona" %}
+const persona1 = new Persona(
+  "hola",
+  "mundo",
+  direccion,
+  13,
+  telefono,
+  "305222@"
+);
+{% endif %}
+{% if entity.name == "Telefono" %}
+const telefono1 = new Telefono("+57", "305222");
+{% endif %}
+{% if entity.name == "Direccion" %}
+const direccion1 = new Direccion("calle 4", "bogota", "colombia");
+{% endif %}
+{{entity.name|lower}}1.insertar{{entity.name|capitalize}}({{entity.name|lower}}1);
+{% if entity.name == "Telefono" %}
+exports.telefono1 = new Telefono("+57", "305222");
+{% endif %}
+console.log({{entity.name|lower}}1);
+{% if entity.name == "Direccion" %}
+exports.direccion1 = new Direccion("calle 4", "bogota", "colombia");
+{% endif %}
